@@ -1,25 +1,45 @@
--<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
-    <title>Sửa sách</title>
+    <title>Sửa Sách</title>
 </head>
 <body>
 
-<h1>Sửa sách</h1>
+<div layout:fragment="content">
+    <h2 class="mb-4">Sửa Thông Tin Sách</h2>
 
-<form action="/books/edit" method="post" th:object="${book}">
-    <input type="hidden" th:field="*{id}" />
+    <form action="/books/edit" method="post" th:object="${book}" class="row g-3">
+        <!-- ID ẩn (không hiển thị lên server) -->
+        <input type="hidden" th:field="*{id}" />
 
-    <label for="title">Tiêu đề:</label>
-    <input type="text" id="title" th:field="*{title}" required />
-    <br />
+        <div class="col-md-6">
+            <label for="title" class="form-label">Tiêu đề</label>
+            <input type="text"
+                   id="title"
+                   th:field="*{title}"
+                   class="form-control"
+                   placeholder="Nhập tiêu đề sách"
+                   required>
+        </div>
 
-    <label for="author">Tác giả:</label>
-    <input type="text" id="author" th:field="*{author}" required />
-    <br />
+        <div class="col-md-6">
+            <label for="author" class="form-label">Tác giả</label>
+            <input type="text"
+                   id="author"
+                   th:field="*{author}"
+                   class="form-control"
+                   placeholder="Nhập tên tác giả"
+                   required>
+        </div>
 
-    <button type="submit">Cập nhật</button>
-</form>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Cập nhật</button>
+            <a href="/books" class="btn btn-secondary">Hủy</a>
+        </div>
+    </form>
+</div>
 
 </body>
 </html>
