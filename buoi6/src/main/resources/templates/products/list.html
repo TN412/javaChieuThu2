@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+    layout:decorate="~{layout/main}">
+
+<head>
+    <title>Products</title>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div class="page-header">
+            <h2>Danh Sách Sản Phẩm</h2>
+            <a th:href="@{/products/create}" class="btn btn-primary" sec:authorize="hasRole('ADMIN')">+ Thêm sản phẩm</a>
+        </div>
+
+        <div th:if="${products.empty}" class="empty-state">
+            <p>Chưa có sản phẩm nào. Hãy tạo sản phẩm mới!</p>
+        </div>
+
+        <table class="table" th:unless="${products.empty}">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Image</th>
+                    <th>Category Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="product, stat : ${products}">
+                    <td th:text="${stat.count}">1</td>
+                    <td th:text="${product.name}">Product Name</td>
+                    <td th:text="${product.price}">0</td>
+                    <td>
+                        <img th:if="${product.image != null and !#strings.isEmpty(product.image)}"
+                            th:src="${product.image}" alt="Product Image" class="product-img" />
+                        <span th:unless="${product.image != null and !#strings.isEmpty(product.image)}"
+                            class="no-image">No Image</span>
+                    </td>
+                    <td th:text="${product.category != null ? product.category.name : 'N/A'}">Category</td>
+                    <td class="action-buttons">
+                        <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-edit"
+                            sec:authorize="hasRole('ADMIN')">Sửa</a>
+                        <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-danger"
+                            sec:authorize="hasRole('ADMIN')"
+                            onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">Xóa</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>

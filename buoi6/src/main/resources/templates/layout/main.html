@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title layout:title-pattern="$CONTENT_TITLE - Shop App">Shop App</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a th:href="@{/}">Trang chủ</a>
+            <a th:href="@{/products}">Sản phẩm</a>
+            <a th:href="@{/categories}">Danh mục</a>
+        </div>
+        <form class="search-form" th:action="@{/products}" method="get">
+            <input class="search-input" type="text" name="keyword" placeholder="Tìm sản phẩm..." th:value="${keyword}" />
+            <button class="btn btn-search" type="submit">Tìm</button>
+        </form>
+        <div class="nav-user">
+            <span sec:authorize="isAuthenticated()">
+                <strong sec:authentication="name">User</strong>
+                &nbsp;|
+            </span>
+            <form th:action="@{/logout}" method="post" style="display:inline;" sec:authorize="isAuthenticated()">
+                <button type="submit" class="btn btn-logout">Đăng xuất</button>
+            </form>
+            <a th:href="@{/login}" style="color:#fff;" sec:authorize="!isAuthenticated()">Đăng nhập</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div layout:fragment="content"></div>
+    </div>
+
+    <footer>
+        <p>© 2025 Shop App - Spring Boot</p>
+    </footer>
+
+</body>
+
+</html>

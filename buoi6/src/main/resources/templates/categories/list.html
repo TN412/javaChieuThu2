@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+    layout:decorate="~{layout/main}">
+
+<head>
+    <title>Categories</title>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div class="page-header">
+            <h2>Danh Sách Danh Mục</h2>
+            <a th:href="@{/categories/create}" class="btn btn-primary" sec:authorize="hasRole('ADMIN')">+ Thêm danh mục</a>
+        </div>
+
+        <div th:if="${categories.empty}" class="empty-state">
+            <p>Chưa có danh mục nào. Hãy tạo danh mục mới!</p>
+        </div>
+
+        <table class="table" th:unless="${categories.empty}">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Số sản phẩm</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="cat, stat : ${categories}">
+                    <td th:text="${stat.count}">1</td>
+                    <td th:text="${cat.name}">Category Name</td>
+                    <td th:text="${cat.products != null ? cat.products.size() : 0}">0</td>
+                    <td class="action-buttons">
+                        <a th:href="@{/categories/edit/{id}(id=${cat.id})}" class="btn btn-edit"
+                            sec:authorize="hasRole('ADMIN')">Sửa</a>
+                        <a th:href="@{/categories/delete/{id}(id=${cat.id})}" class="btn btn-danger"
+                            sec:authorize="hasRole('ADMIN')"
+                            onclick="return confirm('Bạn có chắc muốn xóa danh mục này?')">Xóa</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>

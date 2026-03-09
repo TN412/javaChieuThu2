@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/main}">
+
+<head>
+    <title>Home</title>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div class="hero">
+            <h1>Chào mừng đến với Shop App</h1>
+            <p>Quản lý sản phẩm và danh mục với Spring Boot</p>
+            <div class="hero-actions">
+                <a th:href="@{/products}" class="btn btn-primary">Xem Sản Phẩm</a>
+                <a th:href="@{/categories}" class="btn btn-secondary">Xem Danh Mục</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
