@@ -1,0 +1,220 @@
+/* =====================================================
+   Hệ Thống Đăng Ký Học Phần - Custom Styles
+   ===================================================== */
+
+/* --- Body & Layout --- */
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+
+/* --- Navbar --- */
+.navbar {
+    background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%) !important;
+}
+
+.navbar-brand {
+    font-size: 1.3rem;
+    letter-spacing: 0.5px;
+}
+
+.navbar .input-group {
+    max-width: 320px;
+}
+
+/* --- Hero Section --- */
+.hero-section {
+    background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+    padding: 2.5rem 2rem;
+}
+
+/* --- Course Cards --- */
+.course-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.course-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12) !important;
+}
+
+.course-img-wrapper {
+    height: 180px;
+    overflow: hidden;
+    background-color: #e9ecef;
+}
+
+.course-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.course-card:hover .course-img {
+    transform: scale(1.05);
+}
+
+.course-img-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+}
+
+/* --- Enrolled Cards (My Courses page) --- */
+.enrolled-card {
+    border-radius: 12px;
+    transition: transform 0.2s ease;
+    position: relative;
+}
+
+.enrolled-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.10) !important;
+}
+
+/* --- Auth Cards --- */
+.rounded-top-4 {
+    border-radius: 16px 16px 0 0 !important;
+}
+
+.rounded-bottom-4 {
+    border-radius: 0 0 16px 16px !important;
+}
+
+/* --- Divider for Social Login --- */
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.divider-text {
+    padding: 0 0.75rem;
+}
+
+/* --- Tables (Admin) --- */
+.table th {
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+/* --- Pagination --- */
+.pagination .page-link {
+    border-radius: 8px;
+    margin: 0 2px;
+    border: 1px solid #dee2e6;
+    color: #0d6efd;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+/* --- Badges --- */
+.badge {
+    font-size: 0.75rem;
+    padding: 0.4em 0.7em;
+}
+
+/* --- Footer --- */
+.footer {
+    background: linear-gradient(135deg, #212529 0%, #343a40 100%) !important;
+}
+
+/* --- Buttons --- */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.btn-lg {
+    border-radius: 10px;
+}
+
+/* --- Cards (General) --- */
+.card {
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.06);
+}
+
+/* --- Alerts --- */
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+/* =====================================================
+   Responsive Adjustments
+   ===================================================== */
+
+/* Mobile */
+@media (max-width: 576px) {
+    .hero-section {
+        padding: 1.5rem 1rem;
+    }
+
+    .hero-section h1 {
+        font-size: 1.75rem;
+    }
+
+    .navbar .input-group {
+        max-width: 200px;
+    }
+
+    .course-img-wrapper {
+        height: 150px;
+    }
+
+    .display-1 {
+        font-size: 3rem;
+    }
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+
+    .table-responsive {
+        border-radius: 8px;
+    }
+
+    .hero-section .btn {
+        margin-top: 1rem;
+    }
+}
+
+/* Desktop, Large screens */
+@media (min-width: 992px) {
+    .course-img-wrapper {
+        height: 200px;
+    }
+}
+
+/* ===================================================== */

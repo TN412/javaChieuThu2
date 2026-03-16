@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Trang Chủ - Danh Sách Học Phần</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Hero Section -->
+    <div class="hero-section rounded-3 p-4 mb-4 text-white">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-5 fw-bold"><i class="bi bi-mortarboard-fill me-2"></i>Danh Sách Học Phần</h1>
+                <p class="lead mb-0">Khám phá và đăng ký các học phần phù hợp với bạn</p>
+            </div>
+            <div class="col-md-4 text-end" sec:authorize="isAnonymous()">
+                <a th:href="@{/register}" class="btn btn-light btn-lg me-2">
+                    <i class="bi bi-person-plus me-1"></i>Đăng Ký
+                </a>
+                <a th:href="@{/login}" class="btn btn-outline-light btn-lg">
+                    <i class="bi bi-box-arrow-in-right me-1"></i>Đăng Nhập
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Info -->
+    <div th:if="${keyword != null and !#strings.isEmpty(keyword)}" class="alert alert-info mb-3">
+        <i class="bi bi-search me-2"></i>
+        Kết quả tìm kiếm cho: <strong th:text="${keyword}"></strong>
+        <a th:href="@{/home}" class="btn btn-sm btn-outline-secondary ms-2">
+            <i class="bi bi-x"></i> Xóa tìm kiếm
+        </a>
+    </div>
+
+    <!-- Course Grid -->
+    <div th:if="${#lists.isEmpty(courses)}" class="text-center py-5">
+        <i class="bi bi-journal-x display-1 text-muted"></i>
+        <h4 class="text-muted mt-3">Không tìm thấy học phần nào</h4>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4">
+        <div class="col" th:each="course : ${courses}">
+            <div class="card h-100 course-card shadow-sm">
+                <!-- Hình ảnh học phần -->
+                <div class="course-img-wrapper">
+                    <img th:if="${course.image != null and !#strings.isEmpty(course.image)}"
+                         th:src="${course.image}" class="card-img-top course-img"
+                         th:alt="${course.name}">
+                    <div th:unless="${course.image != null and !#strings.isEmpty(course.image)}"
+                         class="course-img-placeholder d-flex align-items-center justify-content-center">
+                        <i class="bi bi-journal-text display-4 text-white opacity-75"></i>
+                    </div>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <!-- Tên học phần -->
+                    <h5 class="card-title fw-bold text-primary" th:text="${course.name}">Tên học phần</h5>
+                    <!-- Thông tin -->
+                    <div class="mb-2">
+                        <span class="badge bg-success me-1">
+                            <i class="bi bi-clock me-1"></i>
+                            <span th:text="${course.credits} + ' tín chỉ'">3 tín chỉ</span>
+                        </span>
+                        <span class="badge bg-secondary" th:if="${course.category != null}"
+                              th:text="${course.category.name}">Danh mục</span>
+                    </div>
+                    <p class="card-text text-muted mb-1">
+                        <i class="bi bi-person-badge me-1"></i>
+                        <strong>Giảng viên:</strong>
+                        <span th:text="${course.lecturer}">Giảng viên</span>
+                    </p>
+                    <div class="mt-auto pt-3">
+                        <!-- Nút Enroll (Câu 6) - chỉ STUDENT -->
+                        <div sec:authorize="hasRole('STUDENT')">
+                            <span th:if="${enrolledMap[course.id]}"
+                                  class="btn btn-success w-100 disabled">
+                                <i class="bi bi-check-circle me-1"></i>Đã Đăng Ký
+                            </span>
+                            <form th:unless="${enrolledMap[course.id]}"
+                                  th:action="@{'/enroll/' + ${course.id}}" method="post">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="bi bi-plus-circle me-1"></i>Đăng Ký Học Phần
+                                </button>
+                            </form>
+                        </div>
+                        <!-- Thông báo cho người dùng chưa đăng nhập -->
+                        <div sec:authorize="isAnonymous()">
+                            <a th:href="@{/login}" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>Đăng nhập để đăng ký
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination (Câu 1 - 5 học phần/trang) -->
+    <nav th:if="${totalPages > 1}" aria-label="Phân trang học phần">
+        <ul class="pagination justify-content-center">
+            <!-- Trang trước -->
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/home(page=${currentPage - 1}, keyword=${keyword})}">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            <!-- Các trang -->
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/home(page=${i}, keyword=${keyword})}"
+                   th:text="${i + 1}">1</a>
+            </li>
+            <!-- Trang sau -->
+            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/home(page=${currentPage + 1}, keyword=${keyword})}">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+</body>
+</html>

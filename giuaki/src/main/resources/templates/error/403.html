@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Không Có Quyền Truy Cập</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="text-center py-5">
+        <i class="bi bi-shield-lock display-1 text-danger mb-3 d-block"></i>
+        <h1 class="display-4 fw-bold text-danger">403</h1>
+        <h3 class="text-muted">Không Có Quyền Truy Cập</h3>
+        <p class="text-muted mb-4">
+            Bạn không có quyền truy cập vào trang này.
+        </p>
+        <a th:href="@{/home}" class="btn btn-primary btn-lg">
+            <i class="bi bi-house me-2"></i>Về Trang Chủ
+        </a>
+    </div>
+</div>
+</body>
+</html>
