@@ -1,0 +1,246 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh toán</title>
+    <style>
+        .checkout-header {
+            background: linear-gradient(135deg, #6b3f1f 0%, #9b5f35 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .checkout-form {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #6b3f1f;
+            margin-bottom: 8px;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e3e6f0;
+            border-radius: 10px;
+            padding: 12px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #6b3f1f;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .order-summary {
+            background: linear-gradient(135deg, #f8f9fc 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 20px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 2px dashed #e3e6f0;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-total {
+            background: linear-gradient(135deg, #6b3f1f 0%, #9b5f35 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .order-total h4 {
+            color: white;
+        }
+
+        .btn-place-order {
+            background: linear-gradient(135deg, #b7723e 0%, #8f542f 100%);
+            border: none;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+            padding: 15px;
+            width: 100%;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-place-order:hover {
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(28, 200, 138, 0.4);
+        }
+
+        .section-title {
+            color: #6b3f1f;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #6b3f1f;
+        }
+
+        .mini-product-img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 15px;
+        }
+
+        .product-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .product-details {
+            flex-grow: 1;
+        }
+
+        .product-qty {
+            color: #858796;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content" class="container body-content">
+    <!-- Checkout Header -->
+    <div class="checkout-header">
+        <h1><i class="fas fa-credit-card"></i> Thanh Toán Đơn Hàng</h1>
+        <p class="mb-0">Vui lòng điền đầy đủ thông tin để hoàn tất đơn hàng</p>
+    </div>
+
+    <div class="row">
+        <!-- Checkout Form -->
+        <div class="col-lg-7">
+            <div class="checkout-form">
+                <h4 class="section-title"><i class="fas fa-user"></i> Thông Tin Khách Hàng</h4>
+                <form th:action="@{/order/place}" method="post">
+                    <div class="mb-4">
+                        <label for="customerName" class="form-label">
+                            <i class="fas fa-user"></i> Họ và tên *
+                        </label>
+                        <input type="text" class="form-control" id="customerName"
+                               name="customerName" required
+                               placeholder="Nhập họ và tên của bạn">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="phone" class="form-label">
+                            <i class="fas fa-phone"></i> Số điện thoại
+                        </label>
+                        <input type="tel" class="form-control" id="phone"
+                               name="phone"
+                               placeholder="Nhập số điện thoại">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="email" class="form-label">
+                            <i class="fas fa-envelope"></i> Email
+                        </label>
+                        <input type="email" class="form-control" id="email"
+                               name="email"
+                               placeholder="Nhập email của bạn">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="shippingAddress" class="form-label">
+                            <i class="fas fa-map-marker-alt"></i> Địa chỉ giao hàng *
+                        </label>
+                        <textarea class="form-control" id="shippingAddress"
+                                  name="shippingAddress" rows="3" required
+                                  placeholder="Nhập địa chỉ chi tiết để giao hàng"></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="note" class="form-label">
+                            <i class="fas fa-sticky-note"></i> Ghi chú
+                        </label>
+                        <textarea class="form-control" id="note"
+                                  name="note" rows="2"
+                                  placeholder="Ghi chú thêm cho đơn hàng (nếu có)"></textarea>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-place-order">
+                            <i class="fas fa-check-circle"></i> Đặt Hàng Ngay
+                        </button>
+                        <a th:href="@{/cart}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Quay lại giỏ hàng
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="col-lg-5">
+            <div class="order-summary">
+                <h4 class="section-title"><i class="fas fa-receipt"></i> Đơn Hàng Của Bạn</h4>
+
+                <div th:each="item : ${cartItems}" class="order-item">
+                    <div class="product-info">
+                        <img th:if="${item.image} != null and ${item.image} != ''"
+                             class="mini-product-img"
+                             th:src="@{/images/{img}(img=${item.image})}"
+                             alt="Product">
+                        <div th:if="${item.image} == null or ${item.image} == ''"
+                             class="mini-product-img d-flex align-items-center justify-content-center bg-light">
+                            <i class="fas fa-image text-muted"></i>
+                        </div>
+                        <div class="product-details">
+                            <div class="fw-bold" th:text="${item.productName}">Product</div>
+                            <div class="product-qty">
+                                <i class="fas fa-shopping-basket"></i>
+                                Số lượng: <span th:text="${item.quantity}">1</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <div class="fw-bold text-danger"
+                             th:text="${#numbers.formatDecimal(item.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-total">
+                    <h4 class="mb-0">
+                        <i class="fas fa-dollar-sign"></i> TỔNG THANH TOÁN
+                    </h4>
+                    <h2 class="mt-2 mb-0"
+                        th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">
+                    </h2>
+                </div>
+
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Lưu ý:</strong> Vui lòng kiểm tra kỹ thông tin trước khi đặt hàng
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+

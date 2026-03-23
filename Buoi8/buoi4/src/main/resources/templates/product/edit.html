@@ -1,0 +1,245 @@
+﻿<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Sửa sản phẩm</title>
+    <style>
+        .form-header {
+            background: linear-gradient(135deg, #6b3f1f 0%, #9b5f35 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #6b3f1f;
+            margin-bottom: 8px;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e3e6f0;
+            border-radius: 10px;
+            padding: 12px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #6b3f1f;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .current-image-wrapper {
+            background: #f8f9fc;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border: 2px dashed #e3e6f0;
+        }
+
+        .current-image {
+            max-width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-upload-label {
+            background: linear-gradient(135deg, #f8f9fc 0%, #e9ecef 100%);
+            border: 2px dashed #6b3f1f;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload-label:hover {
+            background: linear-gradient(135deg, #6b3f1f 0%, #9b5f35 100%);
+            color: white;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #d19948 0%, #dda20a 100%);
+            border: none;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+            padding: 15px;
+            width: 100%;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-submit:hover {
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(246, 194, 62, 0.4);
+        }
+
+        .input-icon {
+            position: relative;
+        }
+
+        .input-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b3f1f;
+        }
+
+        .input-icon input, .input-icon select {
+            padding-left: 45px;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content" class="container body-content">
+    <!-- Form Header -->
+    <div class="form-header">
+        <h1><i class="fas fa-edit"></i> Chỉnh Sửa Sản Phẩm</h1>
+        <p class="mb-0">Cập nhật thông tin sản phẩm</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="form-card">
+                <form th:action="@{/products/save}"
+                      th:object="${product}"
+                      method="post"
+                      enctype="multipart/form-data">
+
+                    <input type="hidden" th:field="*{id}">
+                    <input type="hidden" name="image" th:value="*{image}">
+
+                    <div class="mb-4">
+                        <label for="name" class="form-label">
+                            <i class="fas fa-box"></i> Tên sản phẩm *
+                        </label>
+                        <div class="input-icon">
+                            <i class="fas fa-box"></i>
+                            <input class="form-control"
+                                   type="text"
+                                   th:field="*{name}"
+                                   id="name"
+                                   required
+                                   placeholder="Nhập tên sản phẩm">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="price" class="form-label">
+                            <i class="fas fa-tag"></i> Giá sản phẩm (VNĐ) *
+                        </label>
+                        <div class="input-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                            <input class="form-control"
+                                   type="number"
+                                   th:field="*{price}"
+                                   id="price"
+                                   required
+                                   min="0"
+                                   placeholder="Nhập giá sản phẩm">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="category" class="form-label">
+                            <i class="fas fa-folder"></i> Danh mục *
+                        </label>
+                        <div class="input-icon">
+                            <i class="fas fa-folder"></i>
+                            <select th:field="*{category}"
+                                    class="form-select"
+                                    id="category"
+                                    required>
+                                <option value="">-- Chọn danh mục --</option>
+                                <option th:each="category : ${categories}"
+                                        th:value="${category.id}"
+                                        th:text="${category.name}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="fas fa-image"></i> Hình ảnh hiện tại
+                        </label>
+                        <div class="current-image-wrapper">
+                            <img th:if="*{image} != null and *{image} != ''"
+                                 th:src="@{/images/{img}(img=*{image})}"
+                                 class="current-image"
+                                 alt="Current Image">
+                            <div th:if="*{image} == null or *{image} == ''"
+                                 class="text-muted">
+                                <i class="fas fa-image fa-4x mb-3"></i>
+                                <p>Chưa có hình ảnh</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="fas fa-cloud-upload-alt"></i> Thay đổi hình ảnh
+                        </label>
+                        <div class="file-upload-wrapper">
+                            <label for="imageFile" class="file-upload-label">
+                                <i class="fas fa-cloud-upload-alt fa-2x"></i>
+                                <div>Kéo thả hoặc nhấp để tải ảnh mới lên</div>
+                                <small class="text-muted">Để trống nếu không muốn thay đổi ảnh</small>
+                            </label>
+                            <input class="form-control d-none"
+                                   type="file"
+                                   name="imageFile"
+                                   id="imageFile"
+                                   accept="image/*">
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-submit">
+                            <i class="fas fa-save"></i> Cập Nhật Sản Phẩm
+                        </button>
+                        <a th:href="@{/products}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times"></i> Hủy bỏ
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Show selected file name
+    document.getElementById('imageFile').addEventListener('change', function(e) {
+        const label = document.querySelector('.file-upload-label');
+        if (e.target.files.length > 0) {
+            label.innerHTML = '<i class="fas fa-check-circle fa-2x"></i><div class="mt-2">Đã chọn: ' + e.target.files[0].name + '</div>';
+        }
+    });
+</script>
+</body>
+</html>
+
+

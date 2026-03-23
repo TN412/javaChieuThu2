@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Categories</title>
+</head>
+<body>
+<div layout:fragment="content" class="container body-content">
+    <h2>Category List</h2>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="category : ${listCategory}">
+            <th scope="row" th:text="${category.id}"></th>
+            <td th:text="${category.name}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
+

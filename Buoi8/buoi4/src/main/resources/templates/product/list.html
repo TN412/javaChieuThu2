@@ -1,0 +1,317 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        .shop-hero {
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 24px;
+            color: #fff4e5;
+            background:
+                    linear-gradient(105deg, rgba(39, 20, 12, 0.95), rgba(99, 58, 35, 0.9)),
+                    url('https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=1600&q=60') center/cover;
+            box-shadow: 0 16px 36px rgba(71, 39, 17, 0.28);
+        }
+
+        .shop-hero h1 {
+            margin-bottom: 10px;
+            font-size: clamp(1.6rem, 2.6vw, 2.5rem);
+        }
+
+        .shop-hero p {
+            margin: 0;
+            max-width: 720px;
+        }
+
+        .category-strip {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 16px 0 6px;
+        }
+
+        .category-chip {
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: #f5e7d5;
+            color: #6a4224;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .filter-card {
+            background: linear-gradient(180deg, #fffdf8 0%, #fff5e9 100%);
+            border: 1px solid #ead6bc;
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 26px;
+            box-shadow: 0 10px 28px rgba(90, 53, 24, 0.12);
+        }
+
+        .filter-label {
+            font-weight: 700;
+            color: #6a4224;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .product-card {
+            height: 100%;
+            border: 1px solid #f0ddc4;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0 8px 20px rgba(84, 49, 23, 0.08);
+            transition: all 0.28s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 16px 34px rgba(84, 49, 23, 0.22);
+        }
+
+        .product-img-wrapper {
+            width: 100%;
+            height: 240px;
+            overflow: hidden;
+            background: #f8ebd9;
+            position: relative;
+        }
+
+        .product-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.35s ease;
+        }
+
+        .product-card:hover .product-img {
+            transform: scale(1.08);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: linear-gradient(120deg, #6b3f1f, #9b5f35);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .product-name {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #2f1b12;
+            margin: 12px 0 8px;
+            min-height: 48px;
+        }
+
+        .product-price {
+            color: #a84224;
+            font-size: 1.35rem;
+            font-weight: 700;
+        }
+
+        .btn-cart {
+            background: linear-gradient(120deg, #6b3f1f, #9b5f35);
+            border: none;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .btn-cart:hover {
+            color: #fff;
+            box-shadow: 0 8px 18px rgba(107, 63, 31, 0.3);
+        }
+
+        .quantity-input {
+            width: 72px;
+            text-align: center;
+            border: 1px solid #e5ccb0;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 62px 20px;
+            color: #7a5a43;
+        }
+
+        .empty-state i {
+            font-size: 4.8rem;
+            margin-bottom: 16px;
+            color: #d9bfa0;
+        }
+
+        @media (max-width: 768px) {
+            .shop-hero,
+            .filter-card {
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content" class="container body-content">
+    <div class="shop-hero">
+        <h1>Khong gian mua sam ca phe rang xay</h1>
+        <p>Lua chon nhung dong ca phe nguyen chat, huong vi can bang va dam vi. Tat ca duoc trinh bay theo phong cach premium.</p>
+        <div class="category-strip" th:if="${categories != null && !categories.isEmpty()}">
+            <span class="category-chip" th:each="cat : ${categories}" th:text="${cat.name}">Arabica</span>
+        </div>
+    </div>
+
+    <div class="filter-card">
+        <form th:action="@{/products}" method="get">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="filter-label"><i class="fas fa-search"></i> Tim kiem</label>
+                    <input type="text" name="keyword" th:value="${keyword}"
+                           class="form-control" placeholder="Nhap ten san pham...">
+                </div>
+                <div class="col-md-3">
+                    <label class="filter-label"><i class="fas fa-folder"></i> Danh muc</label>
+                    <select name="categoryId" class="form-select">
+                        <option value="">Tat ca danh muc</option>
+                        <option th:each="cat : ${categories}"
+                                th:value="${cat.id}"
+                                th:text="${cat.name}"
+                                th:selected="${cat.id == categoryId}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="filter-label"><i class="fas fa-sort"></i> Sap xep</label>
+                    <select name="sortBy" class="form-select">
+                        <option value="">Mac dinh</option>
+                        <option value="price_asc" th:selected="${sortBy == 'price_asc'}">
+                            Gia tang dan
+                        </option>
+                        <option value="price_desc" th:selected="${sortBy == 'price_desc'}">
+                            Gia giam dan
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Loc san pham
+                    </button>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-12">
+                    <a th:href="@{/products}" class="btn btn-secondary">
+                        <i class="fas fa-redo"></i> Reset bo loc
+                    </a>
+                    <a th:href="@{/products/add}" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Them san pham moi
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div th:if="${products != null && !products.isEmpty()}">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div class="col" th:each="product : ${products}">
+                <div class="card product-card">
+                    <div class="product-img-wrapper">
+                        <img th:if="${product.image} != null and ${product.image} != ''"
+                             class="product-img"
+                             th:src="@{/images/{img}(img=${product.image})}"
+                             alt="Product Image">
+                        <div th:if="${product.image} == null or ${product.image} == ''"
+                             class="product-img d-flex align-items-center justify-content-center bg-light">
+                            <i class="fas fa-image fa-4x text-muted"></i>
+                        </div>
+                        <span class="product-badge" th:if="${product.category != null}"
+                              th:text="${product.category.name}">Category</span>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="product-name" th:text="${product.name}">Product Name</h5>
+                        <div class="product-price mb-3">
+                            <i class="fas fa-tag"></i>
+                            <span th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
+                        </div>
+
+                        <div class="d-flex gap-2 mb-3">
+                            <form th:action="@{/cart/add}" method="post" class="flex-grow-1">
+                                <input type="hidden" name="productId" th:value="${product.id}">
+                                <div class="input-group">
+                                    <input type="number" name="quantity" value="1" min="1" max="99"
+                                           class="form-control quantity-input">
+                                    <button type="submit" class="btn btn-cart flex-grow-1">
+                                        <i class="fas fa-cart-plus"></i> Mua ngay
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <a th:href="@{/products/edit/{id}(id=${product.id})}"
+                               class="btn btn-sm btn-outline-primary flex-grow-1">
+                                <i class="fas fa-edit"></i> Sua
+                            </a>
+                            <form th:action="@{/products/delete/{id}(id=${product.id})}"
+                                  method="post" class="flex-grow-1">
+                                <button type="submit" class="btn btn-sm btn-outline-danger w-100"
+                                        onclick="return confirm('Ban co chac muon xoa?')">
+                                    <i class="fas fa-trash"></i> Xoa
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${products == null || products.isEmpty()}" class="empty-state">
+        <i class="fas fa-box-open"></i>
+        <h3>Khong tim thay san pham</h3>
+        <p>Thu bo loc khac hoac them san pham moi vao cua hang.</p>
+        <a th:href="@{/products/add}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Them san pham dau tien
+        </a>
+    </div>
+
+    <nav th:if="${totalPages > 1}" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/products(page=${currentPage - 1}, keyword=${keyword}, categoryId=${categoryId}, sortBy=${sortBy})}">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </a>
+            </li>
+
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/products(page=${i}, keyword=${keyword}, categoryId=${categoryId}, sortBy=${sortBy})}"
+                   th:text="${i + 1}">1</a>
+            </li>
+
+            <li class="page-item" th:classappend="${currentPage >= totalPages - 1} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/products(page=${currentPage + 1}, keyword=${keyword}, categoryId=${categoryId}, sortBy=${sortBy})}">
+                    Next <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+        </ul>
+        <p class="text-center text-muted">
+            Trang <strong th:text="${currentPage + 1}"></strong> / <strong th:text="${totalPages}"></strong>
+            | Tong <strong th:text="${totalItems}"></strong> san pham
+        </p>
+    </nav>
+</div>
+</body>
+</html>
+

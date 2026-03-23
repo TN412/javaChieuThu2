@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết đơn hàng</title>
+    <style>
+        .detail-header {
+            background: linear-gradient(135deg, #6b3f1f 0%, #9b5f35 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .order-info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 2px dashed #e3e6f0;
+            margin-bottom: 15px;
+        }
+
+        .order-info-row:last-child {
+            border-bottom: none;
+        }
+
+        .order-info-label {
+            font-weight: 600;
+            color: #6b3f1f;
+        }
+
+        .section-title {
+            color: #6b3f1f;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #6b3f1f;
+        }
+
+        .product-detail-table {
+            background: #f8f9fc;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .product-detail-table thead {
+            background: linear-gradient(135deg, #6b3f1f 0%, #9b5f35 100%);
+            color: white;
+        }
+
+        .total-row {
+            background: linear-gradient(135deg, #b7723e 0%, #8f542f 100%);
+            color: white;
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+
+        .status-badge {
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .order-id-badge {
+            background: linear-gradient(135deg, #6b3f1f 0%, #9b5f35 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content" class="container body-content">
+    <!-- Detail Header -->
+    <div class="detail-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1><i class="fas fa-file-invoice"></i> Chi Tiết Đơn Hàng</h1>
+                <p class="mb-0">Mã đơn: <span class="order-id-badge">#<span th:text="${order.id}">123</span></span></p>
+            </div>
+            <div>
+                <span class="status-badge bg-warning text-dark">
+                    <i class="fas fa-clock"></i> Đang xử lý
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Information -->
+    <div class="order-card">
+        <h4 class="section-title"><i class="fas fa-info-circle"></i> Thông Tin Đơn Hàng</h4>
+
+        <div class="order-info-row">
+            <span class="order-info-label"><i class="fas fa-user"></i> Khách hàng:</span>
+            <strong th:text="${order.customerName}">Customer Name</strong>
+        </div>
+
+        <div class="order-info-row">
+            <span class="order-info-label"><i class="fas fa-map-marker-alt"></i> Địa chỉ giao hàng:</span>
+            <strong th:text="${order.shippingAddress}">Address</strong>
+        </div>
+
+        <div class="order-info-row">
+            <span class="order-info-label"><i class="fas fa-calendar"></i> Ngày đặt hàng:</span>
+            <strong th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}">Date</strong>
+        </div>
+    </div>
+
+    <!-- Order Details -->
+    <div class="order-card">
+        <h4 class="section-title"><i class="fas fa-list"></i> Chi Tiết Sản Phẩm</h4>
+
+        <div class="table-responsive">
+            <table class="table product-detail-table">
+                <thead>
+                <tr>
+                    <th class="text-center">#</th>
+                    <th><i class="fas fa-box"></i> Sản phẩm</th>
+                    <th class="text-center"><i class="fas fa-tag"></i> Giá</th>
+                    <th class="text-center"><i class="fas fa-shopping-basket"></i> Số lượng</th>
+                    <th class="text-center"><i class="fas fa-dollar-sign"></i> Thành tiền</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="detail, iter : ${order.orderDetails}">
+                    <td class="text-center fw-bold" th:text="${iter.count}">1</td>
+                    <td th:text="${detail.product.name}">Product Name</td>
+                    <td class="text-center" th:text="${#numbers.formatDecimal(detail.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">100,000 VNĐ</td>
+                    <td class="text-center" th:text="${detail.quantity}">1</td>
+                    <td class="text-center fw-bold text-danger"
+                        th:text="${#numbers.formatDecimal(detail.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">100,000 VNĐ</td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr class="total-row">
+                    <td colspan="4" class="text-end"><i class="fas fa-receipt"></i> TỔNG CỘNG:</td>
+                    <td class="text-center" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">500,000 VNĐ</td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="text-center mt-4">
+        <a th:href="@{/order}" class="btn btn-outline-secondary btn-lg">
+            <i class="fas fa-list"></i> Danh sách đơn hàng
+        </a>
+        <a th:href="@{/products}" class="btn btn-primary btn-lg">
+            <i class="fas fa-shopping-bag"></i> Về trang sản phẩm
+        </a>
+    </div>
+</div>
+</body>
+</html>
+
+

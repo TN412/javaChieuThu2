@@ -1,0 +1,273 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Giỏ hàng</title>
+    <style>
+        .cart-header {
+            background: linear-gradient(135deg, #6b3f1f 0%, #9b5f35 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .cart-item-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .cart-item-card:hover {
+            box-shadow: 0 5px 25px rgba(102, 126, 234, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .cart-img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .cart-summary {
+            background: linear-gradient(135deg, #f8f9fc 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px dashed #e3e6f0;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #6b3f1f;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quantity-input {
+            width: 70px;
+            text-align: center;
+            border: 2px solid #e3e6f0;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-update {
+            background: linear-gradient(135deg, #d19948 0%, #dda20a 100%);
+            border: none;
+            color: white;
+            font-weight: 600;
+        }
+
+        .btn-update:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(246, 194, 62, 0.4);
+        }
+
+        .btn-remove {
+            background: linear-gradient(135deg, #a63b25 0%, #c9302c 100%);
+            border: none;
+            color: white;
+            font-weight: 600;
+        }
+
+        .btn-remove:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 74, 59, 0.4);
+        }
+
+        .btn-checkout {
+            background: linear-gradient(135deg, #b7723e 0%, #8f542f 100%);
+            border: none;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+            padding: 15px;
+            width: 100%;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-checkout:hover {
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(28, 200, 138, 0.4);
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .empty-cart i {
+            font-size: 6rem;
+            color: #e3e6f0;
+            margin-bottom: 20px;
+        }
+
+        .product-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            color: #6b3f1f;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .item-total {
+            color: #a63b25;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content" class="container body-content">
+    <!-- Cart Header -->
+    <div class="cart-header">
+        <h1><i class="fas fa-shopping-cart"></i> Giỏ Hàng Của Bạn</h1>
+        <p class="mb-0">Quản lý các sản phẩm bạn muốn mua</p>
+    </div>
+
+    <!-- Empty Cart State -->
+    <div th:if="${cartItems == null || cartItems.isEmpty()}" class="empty-cart">
+        <i class="fas fa-shopping-cart"></i>
+        <h2>Giỏ hàng của bạn đang trống!</h2>
+        <p class="text-muted">Hãy thêm sản phẩm vào giỏ hàng để tiếp tục mua sắm</p>
+        <a th:href="@{/products}" class="btn btn-primary btn-lg mt-3">
+            <i class="fas fa-shopping-bag"></i> Tiếp tục mua sắm
+        </a>
+    </div>
+
+    <!-- Cart Items -->
+    <div th:if="${cartItems != null && !cartItems.isEmpty()}" class="row">
+        <div class="col-lg-8">
+            <div th:each="item : ${cartItems}" class="cart-item-card">
+                <div class="row align-items-center">
+                    <div class="col-md-2">
+                        <img th:if="${item.image} != null and ${item.image} != ''"
+                             class="cart-img"
+                             th:src="@{/images/{img}(img=${item.image})}"
+                             alt="Product">
+                        <div th:if="${item.image} == null or ${item.image} == ''"
+                             class="cart-img d-flex align-items-center justify-content-center bg-light">
+                            <i class="fas fa-image fa-3x text-muted"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <h5 class="product-name" th:text="${item.productName}">Product Name</h5>
+                        <p class="product-price mb-0">
+                            <i class="fas fa-tag"></i>
+                            <span th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
+                        </p>
+                    </div>
+                    <div class="col-md-3">
+                        <form th:action="@{/cart/update}" method="post" class="quantity-control">
+                            <input type="hidden" name="productId" th:value="${item.productId}">
+                            <label class="form-label mb-0"><i class="fas fa-shopping-basket"></i> Số lượng:</label>
+                            <input type="number" name="quantity" th:value="${item.quantity}"
+                                   min="1" max="99" class="form-control quantity-input">
+                            <button type="submit" class="btn btn-update btn-sm">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="col-md-2">
+                        <p class="item-total mb-2">
+                            <span th:text="${#numbers.formatDecimal(item.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
+                        </p>
+                        <form th:action="@{/cart/remove}" method="post">
+                            <input type="hidden" name="productId" th:value="${item.productId}">
+                            <button type="submit" class="btn btn-remove btn-sm w-100"
+                                    onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">
+                                <i class="fas fa-trash"></i> Xóa
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clear Cart Button -->
+            <div class="text-center mt-3">
+                <form th:action="@{/cart/clear}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-outline-danger"
+                            onclick="return confirm('Bạn có chắc muốn xóa toàn bộ giỏ hàng?')">
+                        <i class="fas fa-trash-alt"></i> Xóa toàn bộ giỏ hàng
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Cart Summary -->
+        <div class="col-lg-4">
+            <div class="cart-summary">
+                <h4 class="mb-4"><i class="fas fa-receipt"></i> Thông Tin Đơn Hàng</h4>
+
+                <div class="summary-row">
+                    <span>Số lượng sản phẩm:</span>
+                    <strong th:text="${cartItems.size()}">0</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>Tổng số lượng:</span>
+                    <strong th:text="${#aggregates.sum(cartItems.![quantity])}">0</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>Tạm tính:</span>
+                    <strong th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>Phí vận chuyển:</span>
+                    <strong class="text-success">Miễn phí</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>TỔNG CỘNG:</span>
+                    <span th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</span>
+                </div>
+
+                <a th:href="@{/order/checkout}" class="btn btn-checkout">
+                    <i class="fas fa-credit-card"></i> Thanh Toán
+                </a>
+
+                <a th:href="@{/products}" class="btn btn-outline-secondary w-100 mt-3">
+                    <i class="fas fa-arrow-left"></i> Tiếp tục mua sắm
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+

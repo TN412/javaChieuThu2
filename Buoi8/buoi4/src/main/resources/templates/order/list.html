@@ -1,0 +1,175 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách đơn hàng</title>
+    <style>
+        .page-header {
+            background: linear-gradient(135deg, #6b3f1f 0%, #9b5f35 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .order-table-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-table {
+            background: #f8f9fc;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .order-table thead {
+            background: linear-gradient(135deg, #6b3f1f 0%, #9b5f35 100%);
+            color: white;
+        }
+
+        .order-table tbody tr {
+            transition: all 0.3s;
+        }
+
+        .order-table tbody tr:hover {
+            background: #e9ecef;
+            transform: scale(1.01);
+        }
+
+        .order-id-badge {
+            background: linear-gradient(135deg, #6b3f1f 0%, #9b5f35 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .amount-badge {
+            background: linear-gradient(135deg, #a63b25 0%, #c9302c 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .empty-orders {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .empty-orders i {
+            font-size: 6rem;
+            color: #e3e6f0;
+            margin-bottom: 20px;
+        }
+
+        .btn-view-detail {
+            background: linear-gradient(135deg, #8a6b52 0%, #258391 100%);
+            border: none;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-view-detail:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(54, 185, 204, 0.4);
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content" class="container body-content">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1><i class="fas fa-receipt"></i> Danh Sách Đơn Hàng</h1>
+        <p class="mb-0">Quản lý và theo dõi đơn hàng của bạn</p>
+    </div>
+
+    <div class="order-table-card">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 style="color: #6b3f1f; font-weight: 700;">
+                <i class="fas fa-list"></i> Tất cả đơn hàng
+            </h4>
+            <a th:href="@{/products}" class="btn btn-primary">
+                <i class="fas fa-shopping-bag"></i> Tiếp tục mua hàng
+            </a>
+        </div>
+
+        <!-- Orders Table -->
+        <div th:if="${orders != null && !orders.isEmpty()}">
+            <div class="table-responsive">
+                <table class="table order-table">
+                    <thead>
+                    <tr>
+                        <th class="text-center"><i class="fas fa-hashtag"></i> Mã đơn</th>
+                        <th><i class="fas fa-user"></i> Khách hàng</th>
+                        <th class="text-center"><i class="fas fa-calendar"></i> Ngày đặt</th>
+                        <th class="text-center"><i class="fas fa-dollar-sign"></i> Tổng tiền</th>
+                        <th class="text-center"><i class="fas fa-cog"></i> Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="order : ${orders}">
+                        <td class="text-center">
+                            <span class="order-id-badge" th:text="'#' + ${order.id}">#123</span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="me-2">
+                                    <i class="fas fa-user-circle fa-2x text-primary"></i>
+                                </div>
+                                <div>
+                                    <strong th:text="${order.customerName}">Customer Name</strong>
+                                    <br>
+                                    <small class="text-muted">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span th:text="${#strings.abbreviate(order.shippingAddress, 30)}">Address</span>
+                                    </small>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center" th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}">23/03/2026 14:30</td>
+                        <td class="text-center">
+                            <span class="amount-badge" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">500,000 VNĐ</span>
+                        </td>
+                        <td class="text-center">
+                            <a th:href="@{/order/{id}(id=${order.id})}" class="btn btn-view-detail btn-sm">
+                                <i class="fas fa-eye"></i> Xem chi tiết
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Summary -->
+            <div class="alert alert-info mt-4">
+                <i class="fas fa-info-circle"></i>
+                <strong>Tổng số đơn hàng:</strong> <span th:text="${orders.size()}">0</span> đơn
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${orders == null || orders.isEmpty()}" class="empty-orders">
+            <i class="fas fa-receipt"></i>
+            <h3>Chưa có đơn hàng nào!</h3>
+            <p class="text-muted">Bạn chưa đặt đơn hàng nào. Hãy bắt đầu mua sắm ngay!</p>
+            <a th:href="@{/products}" class="btn btn-primary btn-lg mt-3">
+                <i class="fas fa-shopping-bag"></i> Bắt đầu mua sắm
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+
+
